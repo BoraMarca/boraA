@@ -1,0 +1,62 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "globalDotEnv": [".env"],
+    "pipeline": {
+        "build": {
+            "dotEnv": [".env.production.local", ".env.local", ".env.production", ".env"],
+            "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+            "dependsOn": ["^build"]
+        },
+        "dev": {
+            "dotEnv": [".env.development.local", ".env.local", ".env.development", ".env"],
+            "dependsOn": ["^build"],
+            "persistent": true,
+            "cache": false
+        },
+        "start": {
+            "dotEnv": [".env.production.local", ".env.local", ".env.production", ".env"],
+            "dependsOn": ["^build"],
+            "persistent": false,
+            "cache": false
+        },
+        "test": {
+            "dotEnv": [".env.test.local", ".env.test", ".env"],
+            "dependsOn": ["//#watch-del"],
+            "outputs": ["coverage/**"],
+            "outputMode": "full"
+        },
+        "test:ui": {
+            "cache": false
+        },
+        "test:watch": {
+            "cache": false
+        },
+        "coverage": {
+            "cache": false
+        },
+        "lint": {
+            "dependsOn": ["^build"]
+        },
+        "//#format": {
+            "dependsOn": []
+        },
+        "//#watch-del": {
+            "outputMode": "none",
+            "dependsOn": []
+        },
+        "clean": { "cache": false },
+        "db:introspect": { "cache": false },
+        "db:generate": { "cache": false },
+        "db:check": { "cache": false },
+        "db:up": { "cache": false },
+        "db:drop": { "cache": false },
+        "db:migrate": {
+            "dependsOn": ["@acme/utils#build", "@acme/database#build"],
+            "cache": false
+        },
+        "db:seed": {
+            "dependsOn": ["@acme/utils#build", "@acme/database#build"],
+            "cache": false
+        }
+    }
+}

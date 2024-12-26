@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  pgsql:
+    image: postgres:15-alpine
+    # image: ghcr.io/hydradatabase/hydra:latest
+    container_name: pgsql
+    hostname: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./support/initialize.sql:/docker-entrypoint-initdb.d/initialize.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fuelstack
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d fuelstack']
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  keydb:
+    image: eqalpha/keydb:latest
+    container_name: keydb
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'keydb_data:/data'
+    command: 'keydb-server /etc/keydb/redis.conf --server-threads 2'
+
+  pgweb:
+    image: ghcr.io/sosedoff/pgweb:latest
+    container_name: pgweb
+    restart: always
+    ports:
+      - '54321:8081'
+    environment:
+      PGWEB_DATABASE_URL: 'postgres://postgres:postgres@pgsql:5432/fuelstack?sslmode=disable'
+      PGWEB_LOCK_SESSION: true
+    depends_on:
+      - pgsql
+
+  mailpit:
+    image: axllent/mailpit:v1.6
+    container_name: mailpit
+    restart: unless-stopped
+    volumes:
+      - mailpit_data:/data
+    ports:
+      - '1025:1025' # port the SMTP server should be accessible on
+      - '8025:8025' # port the web interface should be accessible on
+    environment:
+      # https://github.com/axllent/mailpit/wiki/Runtime-options
+      TZ: 'Asia/Jakarta'
+
+  # docker exec -ti garaged /garage status
+  # docker exec -ti garaged /garage bucket list
+  # docker exec -ti garaged /garage key new --name=s3key
+  garaged:
+    image: dxflrs/garage:v0.8.2
+    container_name: garaged
+    restart: unless-stopped
+    network_mode: host
+    # ports:
+    #   - '3900:3900' # s3_api_bind_addr
+    #   - '3901:3901' # rpc_bind_addr
+    #   - '3902:3902' # s3_web_bind_addr
+    #   - '3903:3903' # admin_api_bind_addr
+    #   - '3904:3904' # k2v_api_bind_addr
+    volumes:
+      - 'garage_meta:/var/lib/garage/meta'
+      - 'garage_data:/var/lib/garage/data'
+      - './support/garage.toml:/etc/garage.toml'
+
+volumes:
+  pg_data:
+    driver: local
+  keydb_data:
+    driver: local
+  mailpit_data:
+    driver: local
+  garage_data:
+    driver: local
+  garage_meta:
+    driver: local

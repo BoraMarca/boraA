@@ -1,0 +1,30 @@
+{
+    "name": "fuelstack",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "build": "turbo build --concurrency=20",
+        "dev": "turbo dev --continue --concurrency=20",
+        "db:migrate": "turbo run db:migrate --filter=api",
+        "db:seed": "turbo run db:seed --filter=api",
+        "cleanup": "turbo clean && docker-compose -f docker-compose.yml down --remove-orphans",
+        "format": "prettier --write \"**/*.{json,css,cjs,mjs,js,jsx,ts,tsx,md,mdx,yml}\"",
+        "deps": "npx --yes npm-check-updates -x typescript --deep --interactive",
+        "watch-del": "watchman watch-del `pwd` && watchman watch-project `pwd`",
+        "pre-dev": "docker-compose -f docker-compose.yml up -d",
+        "lint:fix": "turbo run lint -- --fix",
+        "lint": "turbo run lint",
+        "test": "turbo run test"
+    },
+    "devDependencies": {
+        "@acme/eslint-config": "workspace:*",
+        "dotenv-cli": "^7.2.1",
+        "eslint": "^8.47.0",
+        "prettier-plugin-tailwindcss": "^0.5.2",
+        "prettier": "^3.0.1",
+        "rimraf": "^5.0.1",
+        "turbo": "^1.10.12",
+        "typescript": "5.1.6"
+    },
+    "packageManager": "pnpm@8.6.12"
+}

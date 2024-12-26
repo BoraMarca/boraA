@@ -1,0 +1,42 @@
+{
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true,
+        "source.fixAll.eslint": true
+    },
+    "eslint.workingDirectories": ["./apps", "./libraries", "./packages"],
+    "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+    "eslint.format.enable": true,
+    "files.exclude": {
+        "**/*.tsbuildinfo": true,
+        "**/.next/**": true,
+        "**/.turbo/**": true
+    },
+    "files.watcherExclude": {
+        "**/.github/FUNDING.yml": true,
+        "**/.github/ISSUE_TEMPLATE/**": true,
+        "**/.github/PULL_REQUEST_TEMPLATE.md": true,
+        "**/.next/**": true,
+        "**/.turbo/**": true,
+        "**/dist/**": false
+    },
+    "search.exclude": {
+        "**/.next/**": true,
+        "**/.turbo/**": true,
+        "**/dist/**": true,
+        "templates/**": true
+    },
+    "tailwindCSS.files.exclude": [
+        "**/.git/**",
+        "**/.github/**",
+        "**/.vscode/**",
+        "**/node_modules/**",
+        "**/*.{md,js,ts}"
+    ],
+    "[toml]": {
+        "editor.defaultFormatter": "tamasfe.even-better-toml"
+    }
+}
